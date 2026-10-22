@@ -1,0 +1,21 @@
+{
+    "users": [
+        {
+            "id": 1,
+            "name": "Bavly Hany",
+            "email": "bavlyhany006@gmail.com"
+        }
+    ],
+    "books": [
+        {
+            "id": 1,
+            "title": "bavly",
+            "author": "bavly",
+            "category_id": 1,
+            "available_copies": 5
+        }
+    ],
+    "categories": [],
+    "ratings": [],
+    "history": []
+}
