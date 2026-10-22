@@ -58,3 +58,16 @@ class JSONRepository(BaseRepository):
 
     def get_all_books(self) -> List[Book]:
         return [Book.from_dict(b) for b in self._load_data()["books"]]
+    # --- تنفيذ دوال التقييمات ---
+
+    def save_rating(self, rating) -> None:
+        """حفظ تقييم جديد في ملف الـ JSON."""
+        data = self._load_data()
+        data["ratings"].append(rating.to_dict())
+        self._save_data(data)
+
+    def get_ratings_for_book(self, book_id: int) -> list:
+        """جلب كل التقييمات الخاصة بكتاب معين."""
+        data = self._load_data()
+        from models.rating import Rating # استدعاء الكيان
+        return [Rating.from_dict(r) for r in data["ratings"] if r["book_id"] == book_id]

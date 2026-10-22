@@ -5,13 +5,9 @@ from services.library_service import LibraryService
 from utils.exceptions import LibraryException
 
 def main():
-    # 1. تجهيز طبقة التخزين (المخزن)
     repo = JSONRepository()
-    
-    # 2. تجهيز طبقة الخدمات (المدير)
     service = LibraryService(repo)
 
-    # 3. دورة البرنامج المستمرة (Loop)
     while True:
         print("\n" + "="*40)
         print(" 📚 Online Library Management System ")
@@ -20,10 +16,11 @@ def main():
         print("2. Add a New Book")
         print("3. Search for a Book")
         print("4. Borrow a Book")
-        print("5. Exit")
+        print("5. Rate a Book")
+        print("6. Exit")
         print("="*40)
         
-        choice = input("Enter your choice (1-5): ")
+        choice = input("Enter your choice (1-6): ")
         
         try:
             if choice == '1':
@@ -46,7 +43,8 @@ def main():
                 if results:
                     print(f"\n🔍 Found {len(results)} books:")
                     for b in results:
-                        print(f"- [ID: {b.id}] {b.title} by {b.author} (Available Copies: {b.available_copies})")
+                        avg_rating = service.get_book_average_rating(b.id)
+                        print(f"- [ID: {b.id}] {b.title} by {b.author} | Copies: {b.available_copies} | ⭐ {avg_rating}/10")
                 else:
                     print("❌ No books found matching your query.")
                     
@@ -57,20 +55,27 @@ def main():
                     print("✅ Book borrowed successfully! Copies updated.")
                     
             elif choice == '5':
+                user_id = int(input("Enter User ID: "))
+                book_id = int(input("Enter Book ID: "))
+                score = float(input("Enter your rating (1-10): "))
+                review = input("Enter a short review (optional): ")
+                service.rate_book(user_id, book_id, score, review)
+                
+                new_avg = service.get_book_average_rating(book_id)
+                print(f"✅ Rating added! New average for this book is: ⭐ {new_avg}/10")
+                
+            elif choice == '6':
                 print("👋 Exiting the system. Goodbye!")
                 break
                 
             else:
-                print("⚠️ Invalid choice. Please select a number from 1 to 5.")
+                print("⚠️ Invalid choice. Please select a number from 1 to 6.")
                 
         except ValueError:
-            # بيمسك الأخطاء لو اليوزر دخل حروف في مكان المفروض يكون فيه أرقام
             print("❌ Invalid input type! Please enter numbers where expected.")
         except LibraryException as e:
-            # هنا بنمسك الاستثناءات المخصصة بتاعتنا (زي الإيميل الغلط أو نسخ الكتب اللي خلصت)
             print(f"⚠️ Business Rule Error: {e}")
         except Exception as e:
-            # بيمسك أي خطأ تاني مش متوقع
             print(f"🚨 Unexpected System Error: {e}")
 
 if __name__ == "__main__":
